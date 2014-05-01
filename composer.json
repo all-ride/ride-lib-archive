@@ -1,0 +1,19 @@
+{
+    "name": "ride/lib-archive",
+    "description": "Abstraction library for (de)compression of archives.",
+    "version": "0.1.0",
+    "authors": [
+        {
+            "name": "Joris Vandeweerd",
+            "email": "joris@statik.be"
+        }
+    ],
+    "require": {
+        "ride/lib-system": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "ride\\library\\archive\\": ["src/"]
+        }
+    }
+}
