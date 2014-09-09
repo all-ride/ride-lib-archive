@@ -11,7 +11,13 @@ use ride\library\system\file\File;
 class AbstractArchive implements Archive {
 
     /**
-     * The file of the archive
+     * File system to work with
+     * @var \ride\library\system\file\FileSystem
+     */
+    protected $fileSystem;
+
+    /**
+     * File of the archive
      * @var \ride\library\system\file\File
      */
     protected $file;
@@ -23,6 +29,7 @@ class AbstractArchive implements Archive {
      */
     public function __construct(File $file) {
         $this->file = $file;
+        $this->fileSystem = $file->getFileSystem();
     }
 
     /**
