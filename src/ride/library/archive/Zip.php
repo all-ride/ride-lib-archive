@@ -79,9 +79,9 @@ class Zip extends AbstractArchive {
      */
     private function compressFile(ZipArchive $archive, File $file, File $prefix = null) {
         if ($prefix == null) {
-            $prefix = new File($file->getName());
+            $prefix = $this->fileSystem->getFile($file->getName());
         } else {
-            $prefix = new File($prefix, $file->getName());
+            $prefix = $this->fileSystem->getFile($prefix, $file->getName());
         }
 
         $children = null;
