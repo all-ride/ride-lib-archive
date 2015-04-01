@@ -15,10 +15,9 @@ class PharArchive extends AbstractArchive {
 
     /**
      * Compresses a file or combination of files in the archive
-     * @param array|ride\library\system\file\File $source File objects of the
+     * @param array|\ride\library\system\file\File $source File or array of
      * files to compress
-     * @param ride\library\system\file\File $prefix The path for the files in
-     * the archive
+     * @param string $prefix Path for the files in the archive
      * @return null
      * @throws \ride\library\archive\exception\ArchiveException when no source
      * or an invalid source has been provided
@@ -27,7 +26,7 @@ class PharArchive extends AbstractArchive {
      * @throws \ride\library\archive\exception\ArchiveException when the phars
      * could not be written due to the configuration of PHP
      */
-    public function compress($source, File $prefix = null) {
+    public function compress($source, $prefix = null) {
         if (!Phar::canWrite()) {
             throw new ArchiveException('Phar library is not allowed to write phars. Check the PHP configuration for the phar.readonly setting.');
         }
@@ -73,25 +72,24 @@ class PharArchive extends AbstractArchive {
      * @param \Phar $archive Phar object of PHP
      * @param \ride\library\system\file\File $file The file to compress in the
      * archive
-     * @param \ride\library\system\file\File $prefix The path for the file in
-     * the archive
+     * @param string $prefix path for the file in the archive
      * @return null
      */
-    private function compressFile(Phar $archive, File $file, File $prefix = null) {
-        if ($prefix == null) {
-            $prefix = new File($file->getName());
+    private function compressFile(Phar $archive, File $file, $prefix = null) {
+        if ($prefix) {
+            $prefixedFileName = ltrim(rtrim($prefix, '/') . '/' . $file->getName(), '/');
         } else {
-            $prefix = new File($prefix, $file->getName());
+            $prefixedFileName = $file->getName();
         }
 
-        if ($file->exists()) {
-            if ($file->isDirectory()) {
-                $this->compressDirectory($archive, $file, $prefix);
-            } else {
-                $archive->addFile($file->getAbsolutePath(), $prefix->getPath());
-            }
-        } else {
+        if (!$file->exists()) {
             throw new ArchiveException("Source does not exist: $file");
+        }
+
+        if ($file->isDirectory()) {
+            $this->compressDirectory($archive, $file, $prefixedFileName);
+        } else {
+            $archive->addFile($file->getAbsolutePath(), $prefix->getPath());
         }
     }
 
@@ -104,11 +102,11 @@ class PharArchive extends AbstractArchive {
      * in the archive
      * @return null
      */
-    private function compressDirectory(Phar $archive, File $dir, File $prefix) {
+    private function compressDirectory(Phar $archive, File $dir, $prefix) {
         $children = $dir->read();
 
         if (empty($children)) {
-            $archive->addEmptyDir(new File($prefix->getPath(), $dir->getName()));
+            $archive->addEmptyDir(new File($prefix, $dir->getName()));
         } else {
             foreach ($children as $file) {
                 $this->compressFile($archive, $file, $prefix);

@@ -5,7 +5,7 @@ namespace ride\library\archive;
 use ride\library\system\file\File;
 
 /**
- * Interface for archiving files
+ * Interface for a file archive
  */
 interface Archive {
 
@@ -18,13 +18,12 @@ interface Archive {
 
     /**
      * Compresses a file or combination of files in the archive
-     * @param array|\ride\library\system\file\File $source The source(s) of the
-     * file(s) to compress
-     * @param \ride\library\system\file\File $prefix The path for the files in
-     * the archive
+     * @param array|\ride\library\system\file\File $source File or array of
+     * files to compress
+     * @param string $prefix Path for the files in the archive
      * @return null
      */
-    public function compress($source, File $prefix = null);
+    public function compress($source, $prefix = null);
 
     /**
      * Uncompresses the archive to the provided destination

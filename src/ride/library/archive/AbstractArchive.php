@@ -33,14 +33,13 @@ class AbstractArchive implements Archive {
     }
 
     /**
-     * Compresses a file or combination of files in the archive. This
-     * implementation will always throw an exception, implement it to override.
-     * @param array|\ride\library\system\file\File $source The source(s) of the
-     * file(s) to compress
-     * @param \ride\library\system\file\File $prefix Path in the archive
+     * Compresses a file or combination of files in the archive
+     * @param array|\ride\library\system\file\File $source File or array of
+     * files to compress
+     * @param string $prefix Path for the files in the archive
      * @return null
      */
-    public function compress($source, File $prefix = null) {
+    public function compress($source, $prefix = null) {
         throw new ArchiveException('Unsupported action');
     }
 
