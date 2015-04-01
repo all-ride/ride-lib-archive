@@ -27,19 +27,19 @@ class ZipArchive extends AbstractArchive {
         parent::__construct($file);
     }
 
+
     /**
      * Compresses a file or combination of files in the archive
-     * @param array|\ride\library\system\file\File $source File objects of the
+     * @param array|\ride\library\system\file\File $source File or array of
      * files to compress
-     * @param \ride\library\system\file\File $prefix The path for the files in
-     * the archive
+     * @param string $prefix Path for the files in the archive
      * @return null
      * @throws \ride\library\archive\exception\ArchiveException when no source
      * or an invalid source has been provided
      * @throws \ride\library\archive\exception\ArchiveException when the archive
      * could not be created
      */
-    public function compress($source, File $prefix = null) {
+    public function compress($source, $prefix = null) {
         if (empty($source)) {
             throw new ArchiveException('No files provided');
         }
@@ -62,6 +62,7 @@ class ZipArchive extends AbstractArchive {
             if (!($file instanceof File)) {
                 throw new ArchiveException('Invalid source provided: ' . $file);
             }
+
             $this->compressFile($zip, $file, $prefix);
         }
 
@@ -73,15 +74,14 @@ class ZipArchive extends AbstractArchive {
      * @param \PhpZipArchive $archive PhpZipArchive object of PHP
      * @param \ride\library\system\file\File $file The file to compress in the
      * archive
-     * @param \ride\library\system\file\File $prefix The path for the file in
-     * the archive
+     * @param string $prefix path for the file in the archive
      * @return null
      */
-    private function compressFile(PhpZipArchive $archive, File $file, File $prefix = null) {
-        if ($prefix == null) {
-            $prefix = $this->fileSystem->getFile($file->getName());
+    private function compressFile(PhpZipArchive $archive, File $file, $prefix = null) {
+        if ($prefix) {
+            $prefixedFileName = ltrim(rtrim($prefix, '/') . '/' . $file->getName(), '/');
         } else {
-            $prefix = $this->fileSystem->getFile($prefix, $file->getName());
+            $prefixedFileName = $file->getName();
         }
 
         $children = null;
@@ -90,17 +90,17 @@ class ZipArchive extends AbstractArchive {
             if ($file->isDirectory()) {
                 $children = $file->read();
             } else {
-                $archive->addFile($file->getPath(), $prefix->getPath());
+                $archive->addFile($file->getPath(), $prefixedFileName);
 
                 return;
             }
         }
 
         if (empty($children)) {
-            $archive->addEmptyDir($prefix->getPath());
+            $archive->addEmptyDir($prefix);
         } else {
             foreach ($children as $file) {
-                $this->compressFile($archive, $file, $prefix);
+                $this->compressFile($archive, $file, $prefixedFileName);
             }
         }
     }
