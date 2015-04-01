@@ -5,12 +5,12 @@ namespace ride\library\archive;
 use ride\library\archive\exception\ArchiveException;
 use ride\library\system\file\File;
 
-use \ZipArchive;
+use \ZipArchive as PhpZipArchive;
 
 /**
  * Zip archive implementation
  */
-class Zip extends AbstractArchive {
+class ZipArchive extends AbstractArchive {
 
     /**
      * Constructs a new zip archive
@@ -49,8 +49,8 @@ class Zip extends AbstractArchive {
         $parent = $this->file->getParent();
         $parent->create();
 
-        $zip = new ZipArchive();
-        if ($zip->open($path, ZipArchive::CREATE) !== true) {
+        $zip = new PhpZipArchive();
+        if ($zip->open($path, PhpZipArchive::CREATE) !== true) {
             throw new ArchiveException('Could not create ' . $path);
         }
 
@@ -70,14 +70,14 @@ class Zip extends AbstractArchive {
 
     /**
      * Compresses a file into the archive
-     * @param \ZipArchive $archive ZipArchive object of PHP
+     * @param \PhpZipArchive $archive PhpZipArchive object of PHP
      * @param \ride\library\system\file\File $file The file to compress in the
      * archive
      * @param \ride\library\system\file\File $prefix The path for the file in
      * the archive
      * @return null
      */
-    private function compressFile(ZipArchive $archive, File $file, File $prefix = null) {
+    private function compressFile(PhpZipArchive $archive, File $file, File $prefix = null) {
         if ($prefix == null) {
             $prefix = $this->fileSystem->getFile($file->getName());
         } else {
@@ -114,7 +114,7 @@ class Zip extends AbstractArchive {
     public function uncompress(File $destination) {
         $path = $this->file->getAbsolutePath();
 
-        $zip = new ZipArchive();
+        $zip = new PhpZipArchive();
         if ($zip->open($path) !== true) {
             throw new ArchiveException('Could not open ' . $path);
         }

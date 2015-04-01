@@ -5,13 +5,13 @@ namespace ride\library\archive;
 use ride\library\archive\exception\ArchiveException;
 use ride\library\system\file\File;
 
-use \Phar as PhpPhar;
+use \Phar;
 use \UnexpectedValueException;
 
 /**
  * Phar archive implementation
  */
-class Phar extends AbstractArchive {
+class PharArchive extends AbstractArchive {
 
     /**
      * Compresses a file or combination of files in the archive
@@ -28,7 +28,7 @@ class Phar extends AbstractArchive {
      * could not be written due to the configuration of PHP
      */
     public function compress($source, File $prefix = null) {
-        if (!PhpPhar::canWrite()) {
+        if (!Phar::canWrite()) {
             throw new ArchiveException('Phar library is not allowed to write phars. Check the PHP configuration for the phar.readonly setting.');
         }
 
@@ -46,7 +46,7 @@ class Phar extends AbstractArchive {
         }
 
         try {
-            $phar = new PhpPhar($path);
+            $phar = new Phar($path);
         } catch (UnexpectedValueException $e) {
             throw new ArchiveException('Could not open ' . $path);
         }
@@ -77,7 +77,7 @@ class Phar extends AbstractArchive {
      * the archive
      * @return null
      */
-    private function compressFile(PhpPhar $archive, File $file, File $prefix = null) {
+    private function compressFile(Phar $archive, File $file, File $prefix = null) {
         if ($prefix == null) {
             $prefix = new File($file->getName());
         } else {
@@ -104,7 +104,7 @@ class Phar extends AbstractArchive {
      * in the archive
      * @return null
      */
-    private function compressDirectory(PhpPhar $archive, File $dir, File $prefix) {
+    private function compressDirectory(Phar $archive, File $dir, File $prefix) {
         $children = $dir->read();
 
         if (empty($children)) {
@@ -126,7 +126,7 @@ class Phar extends AbstractArchive {
         $path = $this->file->getAbsolutePath();
 
         try {
-            $phar = new PhpPhar($path);
+            $phar = new Phar($path);
         } catch (UnexpectedValueException $e) {
             throw new ArchiveException('Could not open ' . $path);
         }
