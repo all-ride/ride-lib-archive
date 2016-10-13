@@ -20,10 +20,10 @@ Check this code sample to see how to use this library:
 ```php
 <?php
 
-use ride\library\archive\ZipArchive;    
-use ride\library\system\file\FileSystem;    
+use ride\library\archive\ZipArchive;
+use ride\library\system\file\FileSystem;
 
-function createArchive(FileSystem $fileSystem) {          
+function createArchive(FileSystem $fileSystem) {
     // create the archive
     $archiveFile = $fileSystem->getTemporaryFile();
     $archive = new ZipArchive($archiveFile);
